@@ -12,6 +12,8 @@ class Subject extends Model
     protected $fillable = [
         'code',
         'title',
+        'lab_unit',
+        'lec_unit',
         'description',
         'syllabus',
         'deleted'

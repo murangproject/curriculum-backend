@@ -22,6 +22,8 @@ class SubjectController extends Controller
         $fields = $request->validate([
             'code' => 'required|string|unique:subjects,code',
             'title' => 'required|string',
+            'lab_unit' => 'required|integer',
+            'lec_unit' => 'required|integer',
             'description' => 'nullable|string',
             'syllabus' => 'nullable|string',
         ]);
@@ -44,12 +46,14 @@ class SubjectController extends Controller
         $fields = $request->validate([
             'code' => 'required|string|unique:subjects,code,'.$request->id,
             'title' => 'required|string',
+            'lab_unit' => 'required|integer',
+            'lec_unit' => 'required|integer',
             'description' => 'nullable|string',
             'syllabus' => 'nullable|string',
         ]);
 
         $subject = Subject::where('id', $request->id);
-        if($subject) {
+        if($subject->count() > 0) {
             $subject->update($fields);
             return response()->json(['message' => 'Subject updated successfully', 'data' => $subject], 200);
         } else {
@@ -57,10 +61,10 @@ class SubjectController extends Controller
         }
     }
 
-    public function destroy(Subject $subject)
+    public function destroy(Request $request)
     {
-        $subjectToDelete = Subject::where('id', $subject->id);
-        if($subjectToDelete) {
+        $subjectToDelete = Subject::where('id', $request->id);
+        if($subjectToDelete->count() > 0) {
             $subjectToDelete->update(['deleted' => true]);
             return response()->json(['message' => 'Subject deleted successfully'], 200);
         } else {

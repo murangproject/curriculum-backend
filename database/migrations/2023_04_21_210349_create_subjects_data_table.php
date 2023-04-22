@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('subject_data', function (Blueprint $table) {
             $table->id();
-            $table->integer('lab_units');
-            $table->integer('lec_units');
             $table->integer('lab_hr');
             $table->integer('lec_hr');
             $table->boolean('deleted')->default(false);

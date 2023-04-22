@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
             $table->string('code');
-            $table->string('description');
-            $table->string('syllabus');
+            $table->string('title');
+            $table->integer('lab_unit');
+            $table->integer('lec_unit');
+            $table->string('description')->nullable();
+            $table->string('syllabus')->nullable();
             $table->boolean('deleted')->default(false);
             $table->timestamps();
         });
