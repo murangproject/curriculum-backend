@@ -9,25 +9,31 @@ class Subject extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'code';
+    public $incrementing = false;
+
     protected $fillable = [
         'code',
         'title',
-        'lab_unit',
-        'lec_unit',
         'description',
-        'syllabus',
-        'deleted'
+        'units',
+        'hours',
+        'prerequisite_code',
+        'corequisite_code',
+        'is_deleted'
     ];
 
-    public function head() {
-        return $this->hasOne(User::class, 'head_id');
+    public $timestamps = true;
+
+    public function prerequisite() {
+        return $this->belongsTo(Subject::class, 'prerequisite_code', 'code');
     }
 
-    public function prerequisites() {
-        return $this->belongsToMany(SubjectData::class, 'prerequisite_id');
+    public function corequisite() {
+        return $this->belongsTo(Subject::class, 'corequisite_code', 'code');
     }
 
-    public function corequisites() {
-        return $this->belongsToMany(SubjectData::class, 'corequisite_id');
+    public function curriculums() {
+        return $this->belongsToMany(Curriculum::class, 'curriculum_subjects');
     }
 }

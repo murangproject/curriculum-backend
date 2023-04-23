@@ -10,14 +10,12 @@ class Curriculum extends Model
     use HasFactory;
 
     protected $fillable = [
-        'department_id',
-        'academic_year_id',
-        'term_id',
-        'is_approved',
-        'deleted'
+        'title',
+        'description',
+        'is_deleted'
     ];
 
-    public function histories() {
-        return $this->hasMany(CurriculumHistory::class);
+    public function subjects() {
+        return $this->belongsToMany(Subject::class, 'curriculum_subjects');
     }
 }

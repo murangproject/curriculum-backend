@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SubjectRequest;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 
@@ -9,7 +10,8 @@ class SubjectController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::all()->where('deleted', false)->values();
+        $subjects = Subject::with('prerequisite')->where('is_deleted', false)->get()->values();
+        return response()->json($subjects, 200);
         if($subjects) {
             return response()->json($subjects, 200);
         } else {
@@ -17,18 +19,19 @@ class SubjectController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(SubjectRequest $request)
     {
-        $fields = $request->validate([
-            'code' => 'required|string|unique:subjects,code',
-            'title' => 'required|string',
-            'lab_unit' => 'required|integer',
-            'lec_unit' => 'required|integer',
-            'description' => 'nullable|string',
-            'syllabus' => 'nullable|string',
+        $subject = Subject::create([
+            'code' => $request->input('code'),
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'units' => $request->input('units'),
+            'hours' => $request->input('hours'),
+            'syllabus' => $request->input('syllabus'),
+            'prerequisite_id' => $request->input('prerequisite_id'),
+            'corequisite_id' => $request->input('corequisite_id'),
         ]);
 
-        $subject = Subject::create($fields);
         if($subject) {
             return response()->json(['message' => 'Subject created successfully', 'data' => $subject], 200);
         } else {
@@ -41,20 +44,11 @@ class SubjectController extends Controller
         //
     }
 
-    public function update(Request $request)
+    public function update(SubjectRequest $request, String $code)
     {
-        $fields = $request->validate([
-            'code' => 'required|string|unique:subjects,code,'.$request->id,
-            'title' => 'required|string',
-            'lab_unit' => 'required|integer',
-            'lec_unit' => 'required|integer',
-            'description' => 'nullable|string',
-            'syllabus' => 'nullable|string',
-        ]);
-
-        $subject = Subject::where('id', $request->id);
-        if($subject->count() > 0) {
-            $subject->update($fields);
+        $subject = Subject::where('code', $code)->get()->first();
+        if($subject) {
+            $subject->fill($request->all())->save();
             return response()->json(['message' => 'Subject updated successfully', 'data' => $subject], 200);
         } else {
             return response()->json(['message' => 'Subject not found'], 404);
@@ -65,7 +59,7 @@ class SubjectController extends Controller
     {
         $subjectToDelete = Subject::where('id', $request->id);
         if($subjectToDelete->count() > 0) {
-            $subjectToDelete->update(['deleted' => true]);
+            $subjectToDelete->update(['is_deleted' => true]);
             return response()->json(['message' => 'Subject deleted successfully'], 200);
         } else {
             return response()->json(['message' => 'Subject not found'], 404);

@@ -5,12 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AcademicYear extends Model
+class Activity extends Model
 {
     use HasFactory;
 
+    public $timestamps = true;
+
     protected $fillable = [
-        'start_year',
-        'end_year',
+        'user_id',
+        'activity',
+        'description',
+        'date',
+        'time',
+        'status'
     ];
 }

@@ -13,17 +13,5 @@ class TermTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('terms')->insert([
-            'name' => 'First Semester',
-        ]);
-        DB::table('terms')->insert([
-            'name' => 'Second Semester',
-        ]);
-        DB::table('terms')->insert([
-            'name' => 'Third Semester',
-        ]);
-        DB::table('terms')->insert([
-            'name' => 'Fourth Semester',
-        ]);
     }
 }

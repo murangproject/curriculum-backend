@@ -12,15 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subjects', function (Blueprint $table) {
-            $table->id();
-            $table->string('code');
+            $table->string('code')->primary()->unique();
             $table->string('title');
-            $table->integer('lab_unit');
-            $table->integer('lec_unit');
             $table->string('description')->nullable();
+            $table->integer('units');
+            $table->integer('hours');
+
+            $table->string('prerequisite_code')->nullable();
+            $table->string('corequisite_code')->nullable();
+
             $table->string('syllabus')->nullable();
-            $table->boolean('deleted')->default(false);
+            $table->boolean('is_deleted')->default(false);
             $table->timestamps();
+
+            $table->index('code');
+        });
+
+        Schema::table('subjects',function (Blueprint $table){
+            $table->foreign('prerequisite_code')->references('code')->on('subjects')->onDelete('cascade');
+            $table->foreign('corequisite_code')->references('code')->on('subjects')->onDelete('cascade');
         });
     }
 

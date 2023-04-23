@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('curricula', function (Blueprint $table) {
             $table->id();
-            $table->boolean('is_approved')->default(false);
-            $table->boolean('deleted')->default(false);
+            $table->string('title');
+            $table->string('description')->nullable();
+            $table->boolean('is_deleted')->default(false);
             $table->timestamps();
         });
     }

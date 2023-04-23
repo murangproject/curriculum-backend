@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('terms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean('deleted')->default(false);
+            $table->string('month');
+            $table->string('start_year');
+            $table->string('end_year');
+            $table->boolean('is_deleted')->default(false);
             $table->timestamps();
         });
     }

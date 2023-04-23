@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CurriculumController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TermController;
@@ -67,9 +68,19 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // Subject
     Route::get('/subjects', [SubjectController::class, 'index']);
     Route::post('/subjects', [SubjectController::class, 'store']);
-    Route::get('/subjects/{id}', [SubjectController::class, 'show']);
-    Route::put('/subjects/{id}', [SubjectController::class, 'update']);
-    Route::delete('/subjects/{id}', [SubjectController::class, 'destroy']);
+    Route::get('/subjects/{code}', [SubjectController::class, 'show']);
+    Route::put('/subjects/{code}', [SubjectController::class, 'update']);
+    Route::delete('/subjects/{code}', [SubjectController::class, 'destroy']);
+
+    // Curriculum
+    Route::get('/curriculums', [CurriculumController::class, 'index']);
+    Route::post('/curriculums', [CurriculumController::class, 'store']);
+    Route::get('/curriculums/{id}', [CurriculumController::class, 'show']);
+    Route::put('/curriculums/{id}', [CurriculumController::class, 'update']);
+    Route::delete('/curriculums/{id}', [CurriculumController::class, 'destroy']);
+    Route::get('/curriculums/{id}/subjects', [CurriculumController::class, 'getCurriculumWithSubjects']);
+    Route::post('/curriculums/{id}/subjects', [CurriculumController::class, 'addSubjectsToCurriculum']);
+    Route::delete('/curriculums/{id}/subjects', [CurriculumController::class, 'removeSubjectsFromCurriculum']);
 });
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {

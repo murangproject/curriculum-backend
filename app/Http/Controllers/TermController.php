@@ -12,7 +12,7 @@ class TermController extends Controller
      */
     public function index()
     {
-        $terms = Term::all()->where('deleted', false)->values();
+        $terms = Term::all()->where('is_deleted', false)->values();
         if($terms) {
             return response()->json($terms, 200);
         } else {
@@ -27,6 +27,7 @@ class TermController extends Controller
     {
         $fields = $request->validate([
             'name' => 'required|string',
+            'month' => 'required|string',
         ]);
 
         $term = Term::create($fields);
@@ -60,7 +61,7 @@ class TermController extends Controller
     {
         $termToDelete = Term::where('id', $request->id);
         if($termToDelete->count() > 0) {
-            $termToDelete->update(['deleted' => true]);
+            $termToDelete->update(['is_deleted' => true]);
             return response()->json(['message' => 'Term deleted successfully'], 200);
         } else {
             return response()->json(['message' => 'Term not found'], 404);
