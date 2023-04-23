@@ -10,7 +10,7 @@ class SubjectController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::with('prerequisite')->where('is_deleted', false)->get()->values();
+        $subjects = Subject::with('prerequisite', 'corequisite')->where('is_deleted', false)->get()->values();
         return response()->json($subjects, 200);
         if($subjects) {
             return response()->json($subjects, 200);
@@ -27,9 +27,11 @@ class SubjectController extends Controller
             'description' => $request->input('description'),
             'units' => $request->input('units'),
             'hours' => $request->input('hours'),
+            'year_level' => $request->input('year_level'),
+            'term' => $request->input('term'),
             'syllabus' => $request->input('syllabus'),
-            'prerequisite_id' => $request->input('prerequisite_id'),
-            'corequisite_id' => $request->input('corequisite_id'),
+            'prerequisite_code' => $request->input('prerequisite_code'),
+            'corequisite_code' => $request->input('corequisite_code'),
         ]);
 
         if($subject) {

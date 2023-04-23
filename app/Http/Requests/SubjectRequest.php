@@ -27,9 +27,11 @@ class SubjectRequest extends FormRequest
             'description' => 'nullable|string',
             'units' => 'required|integer',
             'hours' => 'required|integer',
+            'year_level' => 'required|integer',
+            'term' => 'required|integer',
             'syllabus' => 'nullable|string',
-            'prerequisite_id' => 'nullable|string',
-            'corequisite_id' => 'nullable|string',
+            'prerequisite_code' => 'nullable|string',
+            'corequisite_code' => 'nullable|string',
         ];
     }
 }

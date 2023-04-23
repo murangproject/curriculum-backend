@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->integer('units');
             $table->integer('hours');
-
+            $table->integer('year_level');
+            $table->integer('term');
             $table->string('prerequisite_code')->nullable();
             $table->string('corequisite_code')->nullable();
-
             $table->string('syllabus')->nullable();
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();

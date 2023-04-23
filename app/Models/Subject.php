@@ -18,6 +18,8 @@ class Subject extends Model
         'description',
         'units',
         'hours',
+        'year_level',
+        'term',
         'prerequisite_code',
         'corequisite_code',
         'is_deleted'
