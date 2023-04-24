@@ -11,16 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comments', function (Blueprint $table) {
-            $table->id();
-            $table->longText('content');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('curriculum_id');
-            $table->timestamps();
-        });
-
         Schema::table('comments', function (Blueprint $table) {
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('curriculum_id')->references('id')->on('curricula')->onDelete('cascade');
         });
     }
 
@@ -29,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comments');
+        Schema::table('curricula', function (Blueprint $table) {
+            //
+        });
     }
 };

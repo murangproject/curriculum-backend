@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SubjectRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class SubjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'required|string|unique:subjects,code',
+            'code' => ['required', 'string', Rule::unique('subjects', 'code')->ignore($this->code, 'code')],
             'title' => 'required|string',
             'description' => 'nullable|string',
             'units' => 'required|integer',

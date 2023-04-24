@@ -13,14 +13,11 @@ class Department extends Model
         'code',
         'name',
         'description',
-        'deleted'
+        'head_id',
+        'is_deleted'
     ];
 
     public function head() {
-        return $this->hasOne(User::class, 'head_id');
-    }
-
-    public function instructors() {
-        return $this->hasMany(User::class);
+        return $this->hasOne(User::class);
     }
 }

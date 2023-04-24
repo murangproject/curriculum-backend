@@ -16,8 +16,11 @@ return new class extends Migration
             $table->string('code');
             $table->string('name');
             $table->string('description')->nullable();
-            $table->boolean('deleted')->default(false);
+            $table->boolean('is_deleted')->default(false);
+            $table->unsignedBigInteger('head_id')->nullable();
             $table->timestamps();
+
+            $table->foreign('head_id')->references('id')->on('users');
         });
     }
 

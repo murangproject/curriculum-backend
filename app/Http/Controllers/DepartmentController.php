@@ -12,7 +12,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments =  Department::all()->where('deleted', false)->values();
+        $departments =  Department::all()->where('is_deleted', false)->values();
         if($departments) {
             return response()->json($departments, 200);
         } else {
@@ -21,7 +21,7 @@ class DepartmentController extends Controller
     }
 
     public function archives() {
-        $departments = Department::all()->where('deleted', true)->values();
+        $departments = Department::all()->where('is_deleted', true)->values();
         if($departments) {
             return response()->json($departments, 200);
         } else {
@@ -32,7 +32,7 @@ class DepartmentController extends Controller
     public function restore(Request $request) {
         $department = Department::find($request->id);
         if($department) {
-            $department->deleted = false;
+            $department->is_deleted = false;
             $department->save();
             return response()->json(['message' => 'Department restored successfully'], 200);
         } else {
@@ -109,7 +109,7 @@ class DepartmentController extends Controller
     {
         $departmentToDelete = Department::where('id', $request->id);
         if($departmentToDelete->count() > 0) {
-            $departmentToDelete->update(['deleted' => true]);
+            $departmentToDelete->update(['is_deleted' => true]);
             $response = [
                 'message' => 'Department deleted successfully',
                 'data' => $departmentToDelete,

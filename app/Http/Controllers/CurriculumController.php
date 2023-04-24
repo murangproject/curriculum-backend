@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Curriculum;
+use App\Models\Department;
 use Illuminate\Http\Request;
 
 class CurriculumController extends Controller
@@ -12,9 +13,14 @@ class CurriculumController extends Controller
      */
     public function index()
     {
-        $curriculums = Curriculum::with('subjects')->where('is_deleted', false)->get()->values();
-        if($curriculums) {
-            return response()->json($curriculums, 200);
+        $curriculums = Curriculum::with('subjects', 'department', 'comments', 'comments.user', 'comments.curriculum')->where('is_deleted', false)->get()->values();
+        $filteredCurriculumns = $curriculums->map(function($curriculum) {
+            if(Department::where('id', $curriculum->department_id)->where('is_deleted', false)->first()) {
+                return $curriculum;
+            }
+        });
+        if($filteredCurriculumns) {
+            return response()->json($filteredCurriculumns, 200);
         } else {
             return response()->json(['message' => 'No curriculums found'], 404);
         }
@@ -32,6 +38,7 @@ class CurriculumController extends Controller
     public function store(Request $request)
     {
         $fields = $request->validate([
+            'department_id' => 'required|integer',
             'title' => 'required|string',
             'description' => 'nullable|string',
         ]);
@@ -44,19 +51,9 @@ class CurriculumController extends Controller
         }
     }
 
-    public function addSubjectToCurriculum(Request $request)
-    {
-        $curriculum = Curriculum::find($request->curriculum_id);
-        $curriculum->subjects()->attach($request->subject_id);
-        return response()->json(['message' => 'Subject added to curriculum successfully'], 200);
-    }
-
     public function addSubjectsToCurriculum(Request $request) {
         $curriculum = Curriculum::find($request->id);
-
-        $attachedIds = $curriculum->subjects()->whereIn('code', $request->subject_ids)->pluck('code');
-        $newIds = array_diff($request->subject_ids, $attachedIds->values()->all());
-        $curriculum->subjects()->attach($newIds);
+        $curriculum->subjects()->sync($request->subject_ids);
         return response()->json(['message' => 'Subjects added to curriculum successfully'], 200);
     }
 
@@ -72,7 +69,6 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum)
     {
-        //
     }
 
     /**
@@ -96,11 +92,11 @@ class CurriculumController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Curriculum $curriculum)
+    public function destroy(Request $request)
     {
-        $curriculumToDelete = Curriculum::where('id', $curriculum->id);
+        $curriculumToDelete = Curriculum::where('id', $request->id);
         if($curriculumToDelete->count() > 0) {
-            $curriculumToDelete->update(['deleted' => true]);
+            $curriculumToDelete->update(['is_deleted' => true]);
             return response()->json(['message' => 'Curriculum deleted successfully'], 200);
         } else {
             return response()->json(['message' => 'Curriculum not found'], 404);

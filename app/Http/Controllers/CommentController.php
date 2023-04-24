@@ -12,7 +12,8 @@ class CommentController extends Controller
      */
     public function index()
     {
-        //
+        $comments = Comment::all();
+        return response()->json($comments);
     }
 
     /**
@@ -20,7 +21,18 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $fields = $request->validate([
+            'user_id' => 'required|integer',
+            'curriculum_id'=> 'required|integer',
+            'content' => 'required|string',
+        ]);
+
+        $comment = Comment::create($fields);
+        if($comment) {
+            return response()->json(['message' => 'Comment created successfully', 'data' => $comment], 200);
+        } else {
+            return response()->json(['message' => 'Comment not created'], 500);
+        }
     }
 
     /**
@@ -42,8 +54,14 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comment $comment)
+    public function destroy(Request $request)
     {
-        //
+        $comment = Comment::where('id', $request->id)->first();
+        if($comment) {
+            $comment->delete();
+            return response()->json(['message' => 'Comment deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Comment not found'], 404);
+        }
     }
 }

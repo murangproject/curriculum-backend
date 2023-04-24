@@ -59,7 +59,7 @@ class SubjectController extends Controller
 
     public function destroy(Request $request)
     {
-        $subjectToDelete = Subject::where('id', $request->id);
+        $subjectToDelete = Subject::where('code', $request->code);
         if($subjectToDelete->count() > 0) {
             $subjectToDelete->update(['is_deleted' => true]);
             return response()->json(['message' => 'Subject deleted successfully'], 200);

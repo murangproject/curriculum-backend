@@ -63,6 +63,11 @@ class UserController extends Controller
         return $request->user();
     }
 
+    public function me(Request $request) {
+        $user = $request->user();
+        return response()->json(['user' => $user], 200);
+    }
+
     public function store(Request $request)
     {
         $fields = $request->validate([

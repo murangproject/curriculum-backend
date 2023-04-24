@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CurriculumController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SubjectController;
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum'], 'excluded_middleware' => 'throttle:api'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Users
@@ -81,6 +82,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/curriculums/{id}/subjects', [CurriculumController::class, 'getCurriculumWithSubjects']);
     Route::post('/curriculums/{id}/subjects', [CurriculumController::class, 'addSubjectsToCurriculum']);
     Route::delete('/curriculums/{id}/subjects', [CurriculumController::class, 'removeSubjectsFromCurriculum']);
+
+    // Comments
+    Route::get('/comments', [CommentController::class, 'index']);
+    Route::post('/comments', [CommentController::class, 'store']);
+    Route::get('/comments/{id}', [CommentController::class, 'show']);
+    Route::put('/comments/{id}', [CommentController::class, 'update']);
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
 });
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
