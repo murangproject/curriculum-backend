@@ -73,6 +73,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'excluded_middleware' => 'thrott
     Route::get('/subjects/{code}', [SubjectController::class, 'show']);
     Route::put('/subjects/{code}', [SubjectController::class, 'update']);
     Route::delete('/subjects/{code}', [SubjectController::class, 'destroy']);
+    Route::post('/subjects/{code}/syllabus', [SubjectController::class, 'uploadSyllabus']);
 
     // Curriculum
     Route::get('/curriculums', [CurriculumController::class, 'index']);

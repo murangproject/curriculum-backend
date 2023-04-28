@@ -67,4 +67,29 @@ class SubjectController extends Controller
             return response()->json(['message' => 'Subject not found'], 404);
         }
     }
+
+    public function uploadSyllabus(Request $request, String $code) {
+        $subject = Subject::where('code', $code)->get()->first();
+
+        $request->validate([
+            'file' => 'required|mimes:pdf|max:2048',
+        ]);
+
+        $fileName = time().'.'.$request->file->extension();
+        $file = $request->file->move(public_path('uploads'), $fileName);
+
+        if($subject) {
+            $updated = $subject->update([
+                'syllabus' => $fileName,
+            ]);
+
+            if($updated) {
+                return response()->json(['message' => 'Syllabus uploaded successfully'], 200);
+            } else {
+                return response()->json(['message' => 'Syllabus not uploaded'], 500);
+            }
+        } else {
+            return response()->json(['message' => 'Subject not found'], 404);
+        }
+    }
 }

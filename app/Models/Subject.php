@@ -19,6 +19,7 @@ class Subject extends Model
         'units',
         'hours',
         'year_level',
+        'syllabus',
         'term',
         'prerequisite_code',
         'corequisite_code',
