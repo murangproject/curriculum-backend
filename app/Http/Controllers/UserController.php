@@ -36,7 +36,7 @@ class UserController extends Controller
             'first_name' => 'required|string',
             'middle_name' => 'string',
             'last_name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
+            'email' => 'required|string|unique:users,email,'.$user->id,
             'password' => 'required|string|confirmed|min:8',
         ]);
 
