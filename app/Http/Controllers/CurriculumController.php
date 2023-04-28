@@ -41,6 +41,7 @@ class CurriculumController extends Controller
             'department_id' => 'required|integer',
             'title' => 'required|string',
             'description' => 'nullable|string',
+            'status' => 'required|string|in:draft,published,approved,review,rejected'
         ]);
 
         $curriculum = Curriculum::create($fields);
@@ -49,6 +50,16 @@ class CurriculumController extends Controller
         } else {
             return response()->json(['message' => 'Curriculum not created'], 500);
         }
+    }
+
+    public function updateStatus(Request $request) {
+        $field = $request->validate([
+            'status' => 'required|string|in:draft,published,approved,review,rejected'
+        ]);
+
+        $curriculumToUpdate = Curriculum::where('id', $request->id);
+        $curriculumToUpdate->update(['status' => $request->status]);
+        return response()->json(['message' => 'Curriculum status updated successfully'], 200);
     }
 
     public function addSubjectsToCurriculum(Request $request) {

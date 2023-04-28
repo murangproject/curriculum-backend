@@ -13,6 +13,7 @@ class Curriculum extends Model
         'department_id',
         'title',
         'description',
+        'status',
         'is_deleted'
     ];
 

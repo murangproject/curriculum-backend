@@ -26,6 +26,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum'], 'excluded_middleware' => 'throttle:api'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/check-role', [AuthController::class, 'checkRole']);
 
     // Users
     Route::post('/users', [UserController::class, 'store']);
@@ -82,6 +83,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'excluded_middleware' => 'thrott
     Route::get('/curriculums/{id}/subjects', [CurriculumController::class, 'getCurriculumWithSubjects']);
     Route::post('/curriculums/{id}/subjects', [CurriculumController::class, 'addSubjectsToCurriculum']);
     Route::delete('/curriculums/{id}/subjects', [CurriculumController::class, 'removeSubjectsFromCurriculum']);
+    Route::put('/curriculums/{id}/status', [CurriculumController::class, 'updateStatus']);
 
     // Comments
     Route::get('/comments', [CommentController::class, 'index']);

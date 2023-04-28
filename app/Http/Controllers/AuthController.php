@@ -55,4 +55,11 @@ class AuthController extends Controller
             'message' => 'Logged out'
         ];
     }
+
+    public function checkRole(Request $request)
+    {
+        $user = Auth::user();
+        $role = $user->role;
+        return response()->json(['role' => $role], 200);
+    }
 }

@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->longText('description')->nullable();
+            $table->enum('status', array('draft', 'published', 'approved', 'rejected', 'review'))->default('draft');
             $table->boolean('is_deleted')->default(false);
+
             $table->unsignedBigInteger('department_id');
             $table->unsignedBigInteger('comment_id')->nullable();
             $table->timestamps();
