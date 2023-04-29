@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -48,6 +49,12 @@ class UserController extends Controller
             'password' => Hash::make($fields['password']),
         ]);
 
+        Activity::create([
+            'user_id' => $user->id,
+            'type' => 'user',
+            'description' => $user->first_name . ' ' . $user->last_name . ' initialized their account'
+        ]);
+
         if($updated) {
             return response([
                 'message' => 'User successfully updated',
@@ -84,6 +91,13 @@ class UserController extends Controller
         ]);
 
         if($created) {
+            Activity::create(
+                [
+                    'user_id' => $request->user()->id,
+                    'type' => 'user',
+                    'description' => $request->user()->first_name . ' ' . $request->user()->last_name . ' created a new user'
+                ]
+            );
             return response()->json([
                 'message' => 'User successfully created',
             ], 201);
@@ -96,6 +110,45 @@ class UserController extends Controller
 
     public function show(string $id)
     {
+    }
+
+    public function updateProfile(Request $request, string $id) {
+        $user = $request->user();
+        $userToUpdate = User::findOrfail($id);
+
+        $fields = $request->validate(
+            [
+                'first_name' => 'string',
+                'middle_name' => 'string',
+                'last_name' => 'string',
+                'email' => 'string|unique:users,email,'.$id,
+                'address' => 'string',
+                'description' => 'string',
+                'role_name' => 'string',
+                'role_type' => 'in:admin,committee_chair,committee_member,stakeholder',
+                'deleted' => 'boolean',
+            ]
+        );
+
+        $updated = $userToUpdate->update($fields);
+
+        if($updated) {
+            Activity::create(
+                [
+                    'user_id' => $request->user()->id,
+                    'type' => 'user',
+                    'description' => $request->user()->first_name . ' ' . $request->user()->last_name . ' updated their profile'
+                ]
+            );
+            return response()->json([
+                'message' => 'Profile successfully updated',
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'Profile was not updated'
+            ], 500);
+        }
+
     }
 
     public function update(Request $request, string $id)
@@ -132,6 +185,11 @@ class UserController extends Controller
         $updated = $userToUpdate->update($fields);
 
         if($updated) {
+            Activity::create([
+                'user_id' => $user->id,
+                'type' => 'user',
+                'description' => $user->first_name . ' ' . $user->last_name . ' updated a user'
+            ]);
             return response()->json([
                 'message' => 'User successfully updated',
             ], 200);
@@ -157,6 +215,11 @@ class UserController extends Controller
         ]);
 
         if($deleted) {
+            Activity::create([
+                'user_id' => $user->id,
+                'type' => 'user',
+                'description' => $user->first_name . ' ' . $user->last_name . ' deleted a user'
+            ]);
             return response()->json([
                 'message' => 'User successfully deleted',
             ], 200);

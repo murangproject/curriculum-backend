@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SubjectRequest;
+use App\Models\Activity;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 
@@ -34,6 +35,14 @@ class SubjectController extends Controller
             'corequisite_code' => $request->input('corequisite_code'),
         ]);
 
+        $fullname = auth()->user()->first_name . ' ' . auth()->user()->last_name;
+
+        Activity::create([
+                'user_id' => auth()->user()->id,
+                'type' => 'subject',
+                'description' => $fullname . ' created ' . $subject->code . ' ' . $subject->title . ' subject'
+            ]);
+
         if($subject) {
             return response()->json(['message' => 'Subject created successfully', 'data' => $subject], 200);
         } else {
@@ -49,8 +58,14 @@ class SubjectController extends Controller
     public function update(SubjectRequest $request, String $code)
     {
         $subject = Subject::where('code', $code)->get()->first();
+        $fullname = auth()->user()->first_name . ' ' . auth()->user()->last_name;
         if($subject) {
             $subject->fill($request->all())->save();
+            Activity::create([
+                'user_id' => auth()->user()->id,
+                'type' => 'subject',
+                'description' => $fullname . ' updated ' . $subject->code . ' ' . $subject->title . ' subject'
+            ]);
             return response()->json(['message' => 'Subject updated successfully', 'data' => $subject], 200);
         } else {
             return response()->json(['message' => 'Subject not found'], 404);
@@ -62,6 +77,11 @@ class SubjectController extends Controller
         $subjectToDelete = Subject::where('code', $request->code);
         if($subjectToDelete->count() > 0) {
             $subjectToDelete->update(['is_deleted' => true]);
+            Activity::create([
+                'user_id' => auth()->user()->id,
+                'type' => 'subject',
+                'description' => 'Subject ' . $request->code . ' deleted',
+            ]);
             return response()->json(['message' => 'Subject deleted successfully'], 200);
         } else {
             return response()->json(['message' => 'Subject not found'], 404);
@@ -77,6 +97,14 @@ class SubjectController extends Controller
 
         $fileName = time().'.'.$request->file->extension();
         $file = $request->file->move(public_path('uploads'), $fileName);
+
+        $fullname = $request->user()->first_name.' '.$request->user()->last_name;
+
+        Activity::create([
+            'user_id' => $request->user_id,
+            'type' => 'subject',
+            'description' => $fullname . ' uploaded syllabus for ' . $subject->code . ' ' . $subject->title . ' subject'
+        ]);
 
         if($subject) {
             $updated = $subject->update([

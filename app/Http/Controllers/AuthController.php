@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,13 @@ class AuthController extends Controller
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
+        $fullname = $user->first_name . ' ' . $user->last_name;
+
+        Activity::create([
+            'user_id' => $user->id,
+            'type' => 'login',
+            'description' => $fullname . ' logged in'
+        ]);
 
         $initialize = $fields['password'] == env('INITIAL_USER_PASSWORD');
 
@@ -50,6 +58,12 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
+
+        Activity::create([
+            'user_id' => $request->user()->id,
+            'type' => 'logout',
+            'description' => $request->user()->first_name . ' ' . $request->user()->last_name . ' logged out'
+        ]);
 
         return [
             'message' => 'Logged out'

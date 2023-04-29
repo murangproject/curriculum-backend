@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 
@@ -27,8 +28,19 @@ class CommentController extends Controller
             'content' => 'required|string',
         ]);
 
+        $fullname = auth()->user()->first_name . ' ' . auth()->user()->last_name;
         $comment = Comment::create($fields);
         if($comment) {
+            Activity::create([
+                'user_id' => auth()->user()->id,
+                'type' => 'comment',
+                'description' => $fullname . ' added feedback on curriculum titled ' . $comment->curriculum->title
+            ]);
+            Activity::create([
+                'user_id' => auth()->user()->id,
+                'type' => 'curriculum',
+                'description' => $fullname . ' added feedback on curriculum titled ' . $comment->curriculum->title
+            ]);
             return response()->json(['message' => 'Comment created successfully', 'data' => $comment], 200);
         } else {
             return response()->json(['message' => 'Comment not created'], 500);

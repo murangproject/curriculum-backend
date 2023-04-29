@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\Department;
 use Illuminate\Http\Request;
 
@@ -34,6 +35,12 @@ class DepartmentController extends Controller
         if($department) {
             $department->is_deleted = false;
             $department->save();
+            $fullname = auth()->user()->first_name . ' ' . auth()->user()->last_name;
+            Activity::create([
+                'user_id' => auth()->user()->id,
+                'type' => 'department',
+                'description' => 'Department ' . $department->name . ' restored by ' . $fullname . ' from archive'
+            ]);
             return response()->json(['message' => 'Department restored successfully'], 200);
         } else {
             return response()->json(['message' => 'Department not found'], 404);
@@ -58,6 +65,12 @@ class DepartmentController extends Controller
         ];
 
         if($department) {
+            $fullname = auth()->user()->first_name . ' ' . auth()->user()->last_name;
+            Activity::create([
+                'user_id' => auth()->user()->id,
+                'type' => 'department',
+                'description' => 'Department ' . $department->name . ' was created by ' . $fullname
+            ]);
             return response()->json($response, 201);
         } else {
             return response()->json(['message' => 'Department creation failed'], 500);
@@ -92,6 +105,12 @@ class DepartmentController extends Controller
 
         if($departmentToUpdate->count() > 0) {
             $departmentToUpdate->update($fields);
+            $fullname = auth()->user()->first_name . ' ' . auth()->user()->last_name;
+            Activity::create([
+                'user_id' => auth()->user()->id,
+                'type' => 'department',
+                'description' => 'Department ' . $departmentToUpdate->first()->name . ' was updated by ' . $fullname
+            ]);
             $response = [
                 'message' => 'Department updated successfully',
                 'data' => $departmentToUpdate,
@@ -110,10 +129,16 @@ class DepartmentController extends Controller
         $departmentToDelete = Department::where('id', $request->id);
         if($departmentToDelete->count() > 0) {
             $departmentToDelete->update(['is_deleted' => true]);
+            $fullname = auth()->user()->first_name . ' ' . auth()->user()->last_name;
             $response = [
                 'message' => 'Department deleted successfully',
                 'data' => $departmentToDelete,
             ];
+            Activity::create([
+                'user_id' => auth()->user()->id,
+                'type' => 'department',
+                'description' => 'Department ' . $departmentToDelete->first()->name . ' was deleted by ' . $fullname
+            ]);
             return response()->json($response, 200);
         } else {
             return response()->json(['message' => 'Department not found'], 404);

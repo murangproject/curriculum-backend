@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CurriculumController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TermController;
 use App\Http\Controllers\UserController;
@@ -43,6 +44,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'excluded_middleware' => 'thrott
     // Curent user
     Route::get('/current', [UserController::class, 'current']);
     Route::post('/init', [UserController::class, 'init']);
+    Route::put('/profile/{id}', [UserController::class, 'updateProfile']);
 
     // Department
     Route::get('/departments', [DepartmentController::class, 'index']);
@@ -92,6 +94,10 @@ Route::group(['middleware' => ['auth:sanctum'], 'excluded_middleware' => 'thrott
     Route::get('/comments/{id}', [CommentController::class, 'show']);
     Route::put('/comments/{id}', [CommentController::class, 'update']);
     Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
+
+    // Activities
+    Route::get('/activities', [ActivityController::class, 'index']);
+    Route::post('/activities', [ActivityController::class, 'show']);
 });
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
