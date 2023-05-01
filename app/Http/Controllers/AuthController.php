@@ -55,6 +55,56 @@ class AuthController extends Controller
         return response($response, 201);
     }
 
+
+    public function changeResetPassword(Request $request) {
+        $fields = $request->validate([
+            'password' => 'required|string|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        $user->password = Hash::make($fields['password']);
+        $user->save();
+
+        Activity::create([
+            'user_id' => $user->id,
+            'type' => 'change_password',
+            'description' => $user->first_name . ' ' . $user->last_name . ' changed password'
+        ]);
+
+        return response([
+            'message' => 'Password changed'
+        ], 201);
+    }
+
+    public function changePassword(Request $request) {
+        $fields = $request->validate([
+            'password' => 'required|string',
+            'new_password' => 'required|string|confirmed'
+        ]);
+
+        $user = Auth::user();
+
+        if(!Hash::check($fields['password'], $user->password)) {
+            return response([
+                'message' => 'Bad credentials'
+            ], 401);
+        }
+
+        $user->password = Hash::make($fields['new_password']);
+        $user->save();
+
+        Activity::create([
+            'user_id' => $user->id,
+            'type' => 'change_password',
+            'description' => $user->first_name . ' ' . $user->last_name . ' changed password'
+        ]);
+
+        return response([
+            'message' => 'Password changed'
+        ], 201);
+    }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

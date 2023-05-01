@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CurriculumController;
 use App\Http\Controllers\DepartmentController;
@@ -24,10 +25,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
 Route::group(['middleware' => ['auth:sanctum'], 'excluded_middleware' => 'throttle:api'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/check-role', [AuthController::class, 'checkRole']);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
+    Route::post('/change-reset-password', [AuthController::class, 'changeResetPassword']);
 
     // Users
     Route::post('/users', [UserController::class, 'store']);
@@ -103,3 +107,4 @@ Route::group(['middleware' => ['auth:sanctum'], 'excluded_middleware' => 'thrott
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
+
